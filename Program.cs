@@ -21,9 +21,9 @@ class Program
         return;
         }
 
-        int RandomGen = RandomNumberGenerator.GetInt32(args.Length);
+        int RandomCpuChoise = RandomNumberGenerator.GetInt32(args.Length);
         using (HMACSHA256 hmac = new HMACSHA256(key)){
-            byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(args[RandomGen]));
+            byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(args[RandomCpuChoise]));
             Console.WriteLine($"Hashed Selection CPU: {Convert.ToBase64String(hash)}");
         }
         
@@ -37,27 +37,27 @@ class Program
         string inputSelection = Console.ReadLine();
         int selectedIndex = -1;
         while(selectedIndex == -1){
-           if(int.TryParse(inputSelection, out int selectedMove) && selectedMove > 0  && selectedMove <= args.Length){
-               selectedIndex = selectedMove - 1;
-           } else if (inputSelection == "0"){
-               return;    
-           }else if(inputSelection == "?"){
-               getHelpDesk(args);
-               inputSelection = Console.ReadLine();
-           }
-           else{
-                  Console.WriteLine($"Enter your move correct from 1 to {args.Length}: ");
+            if(int.TryParse(inputSelection, out int selectedMove) && selectedMove > 0  && selectedMove <= args.Length){
+                selectedIndex = selectedMove - 1;
+            } else if(inputSelection == "0"){
+            return;    
+            } else if(inputSelection == "?"){
+                getHelpDesk(args);
+                inputSelection = Console.ReadLine();
+            }
+            else{
+                Console.WriteLine($"Enter your move correct from 1 to {args.Length}: ");
            }
         }
 
         Console.WriteLine($"Your move is {args[selectedIndex]}");
-        Console.WriteLine($"CPU answer: {args[RandomGen]}\nKey:{Convert.ToBase64String(key)};");
+        Console.WriteLine($"CPU answer: {args[RandomCpuChoise]}\nKey:{Convert.ToBase64String(key)};");
 
-        var resultGame = getResultGame(args, selectedIndex, RandomGen);
+        var resultGame = getResultGame(args, selectedIndex, RandomCpuChoise);
         Console.WriteLine(resultGame);
     }
 
-    public static string getResultGame(string[] movesArray, int selectedIndex, int RandomGen){
+    public static string getResultGame(string[] movesArray, int selectedIndex, int RandomCpuChoise){
         List<string> ListItems = new List<string>(movesArray);
         int ListItemsCount = ListItems.Count;
         if(selectedIndex <= ListItems.Count/2){
@@ -69,12 +69,12 @@ class Program
             for(int j = 0; j < (selectedIndex - ListItemsCount/2); j++){
                 ListItems.Insert(ListItemsCount, ListItems[0]);
                 ListItems.RemoveAt(0);
-             }
+            }
         }
-        int indexCPU = ListItems.IndexOf(movesArray[RandomGen]);
-        if(ListItemsCount/2 < indexCPU){
+        int RandomCpuIndex = ListItems.IndexOf(movesArray[RandomCpuChoise]);
+        if(ListItemsCount/2 < RandomCpuIndex){
             return("You win");
-        } else if (ListItemsCount/2 == indexCPU){
+        } else if (ListItemsCount/2 == RandomCpuIndex){
             return("Draw");
         } else {
             return("You lose");
@@ -83,7 +83,7 @@ class Program
     }
 
     public static void getHelpDesk(string[] movesArray){
-        var table = new ConsoleTable("    User vs   PC ");
+        var table = new ConsoleTable(" User vs   PC ");
         table.AddColumn(movesArray);
         string[][] rowForTable = new string[movesArray.Length][];
         for(int j = 0; j < movesArray.Length; j++){
